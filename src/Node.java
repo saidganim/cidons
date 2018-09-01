@@ -6,14 +6,16 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Node {
 
+    private static NodeInstance SENTINEL_NODE = new NodeInstance();
     private NetworkManager networkManager = null;
     private boolean initiator;
     private ArrayList<NodeInstance> links;
     private ArrayList<NodeInstance> toHandle;
-    private ArrayList<NodeInstance> toNotify;
+    private CopyOnWriteArrayList<NodeInstance> toNotify;
     private Set<NodeInstance> children = new HashSet<NodeInstance>();
     private NodeInstance father;
     private boolean started = false;
@@ -26,7 +28,7 @@ public class Node {
         this.links = config.links;
         _id = config.id;
         this.toHandle = (ArrayList<NodeInstance>)links.clone();
-        this.toNotify = (ArrayList<NodeInstance>)links.clone();
+        this.toNotify = new CopyOnWriteArrayList<NodeInstance>(links);
         this.networkManager.setNodesList(this.links);
         this.networkManager.id = _id;
         this.networkManager.init(this);
@@ -39,6 +41,7 @@ public class Node {
             };
             new Thread(f).start(); // starting listener in separate thread;
             if(config.initiator) {
+                father = SENTINEL_NODE;
                 Thread.sleep(1000);
                 moveOn();
             } else {}
@@ -73,6 +76,30 @@ public class Node {
     }
 
     private void moveOn(){
+        NodeInstance nextNode = null;
+        if(toHandle.size() > 0){
+            nextNode = toHandle.remove(0);
+            toNotify.remove(nextNode);
+        }
+        Runnable f = () -> {
+           if(!started){
+
+               Random random = new Random();
+               try {
+                   Thread.sleep(random.nextInt(2000));
+               } catch (InterruptedException e) {
+                   e.printStackTrace();
+               }
+               started = true;
+               _Message visited = new _Message();
+               visited.messageType = _Message.MessageType.visited;
+               for(NodeInstance curr : toNotify) { // Notify all neighbors that I am visited only for once
+                   networkManager.sendMessage(curr, visited);
+               }
+           }
+        };
+
+        new Thread(f).start();
 
         if(toHandle.size() == 0){
             // Very good; we have finished exploring the neighbors. It's time to return the token to parent node
@@ -80,29 +107,11 @@ public class Node {
 
         } else {
             // Still have some work to do
-            NodeInstance nextNode = toHandle.remove(0);
-            toNotify.remove(nextNode);
             _Message mess = new _Message();
             mess.messageType = _Message.MessageType.tokenf2s;
             children.add(nextNode);
             this.networkManager.sendMessage(nextNode, mess);
         }
-
-        Random random = new Random();
-        try {
-            Thread.sleep(random.nextInt(2000));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if(!started){
-            started = true;
-            _Message visited = new _Message();
-            visited.messageType = _Message.MessageType.visited;
-            for(NodeInstance curr : toNotify) { // Notify all neighbors that I am visited only for once
-                networkManager.sendMessage(curr, visited);
-            }
-        }
-
     }
 
     private void deactivate(){
@@ -117,10 +126,10 @@ public class Node {
         for(NodeInstance curr : children)
             builder.append("child : " + curr.addr.getValue() + ";");
         System.out.println(builder.toString());
-        if(father != null)
+        if(father != null && father != SENTINEL_NODE)
             this.networkManager.sendMessage(nextNode, mess);
         else {
-            System.out.println("INITIATOR FINISHED THE TASK : " + Main.counter);
+            System.out.println("INITIATOR FINISHED THE TASK : " + Main.counter + " Messages are sent");
             System.exit(0);
         }
     }
@@ -150,6 +159,11 @@ public class Node {
                     children.remove(sender);
                     toNotify.remove(sender);
                     moveOn();
+                } else {
+                    if(children.contains(sender)){
+                        children.remove(sender);
+                        moveOn();
+                    }
                 }
                 // Else Ignore the message because of eventually sender will receipt VISITED message
                 // there is no break statement here on purpose...

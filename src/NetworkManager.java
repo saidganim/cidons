@@ -1,7 +1,6 @@
 import javafx.util.Pair;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -58,7 +57,7 @@ public class NetworkManager {
         try {
             ssocket = new ServerSocket(this.port);
         } catch (IOException e) {
-            System.out.println("Exception");
+            System.out.println("Server Socket IOException");
             System.exit(1);
         }
         this.nodeInstance = node;
