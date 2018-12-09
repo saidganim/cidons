@@ -16,6 +16,10 @@ public class NodeInstance {
             return false;
         return true;
     }
+
+    public String toString(){
+        return "Object NodeInstance{id:" + id + ";addr:" + addr + "}";
+    }
 }
 
 

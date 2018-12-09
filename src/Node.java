@@ -42,7 +42,7 @@ public class Node {
             new Thread(f).start(); // starting listener in separate thread;
             if(config.initiator) {
                 father = SENTINEL_NODE;
-                Thread.sleep(1000);
+                Thread.sleep(5000);
                 moveOn();
             } else {}
         } catch (InterruptedException e) {
@@ -75,43 +75,45 @@ public class Node {
         return null;
     }
 
-    private void moveOn(){
+    synchronized private void moveOn(){
+        if(!started) {
+            Runnable f = () -> {
+                Random random = new Random();
+//                try {
+//                    Thread.sleep(random.nextInt(2000));
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+                started = true;
+                _Message visited = new _Message();
+                visited.messageType = _Message.MessageType.visited;
+                for (NodeInstance curr : toNotify) { // Notify all neighbors that I am visited only for once
+                    networkManager.sendMessage(curr, visited);
+                }
+
+            };
+
+            new Thread(f).start();
+        }
+
+        if(toHandle.size() == 0){
+            // Very good; we have finished exploring the neighbors. It's time to return the token to parent node
+            deactivate();
+            return;
+        }
         NodeInstance nextNode = null;
         if(toHandle.size() > 0){
             nextNode = toHandle.remove(0);
             toNotify.remove(nextNode);
         }
-        Runnable f = () -> {
-           if(!started){
 
-               Random random = new Random();
-               try {
-                   Thread.sleep(random.nextInt(2000));
-               } catch (InterruptedException e) {
-                   e.printStackTrace();
-               }
-               started = true;
-               _Message visited = new _Message();
-               visited.messageType = _Message.MessageType.visited;
-               for(NodeInstance curr : toNotify) { // Notify all neighbors that I am visited only for once
-                   networkManager.sendMessage(curr, visited);
-               }
-           }
-        };
 
-        new Thread(f).start();
+        // Still have some work to do
+        _Message mess = new _Message();
+        mess.messageType = _Message.MessageType.tokenf2s;
+        children.add(nextNode);
+        this.networkManager.sendMessage(nextNode, mess);
 
-        if(toHandle.size() == 0){
-            // Very good; we have finished exploring the neighbors. It's time to return the token to parent node
-            deactivate();
-
-        } else {
-            // Still have some work to do
-            _Message mess = new _Message();
-            mess.messageType = _Message.MessageType.tokenf2s;
-            children.add(nextNode);
-            this.networkManager.sendMessage(nextNode, mess);
-        }
     }
 
     private void deactivate(){
@@ -124,7 +126,7 @@ public class Node {
         mess.messageType = _Message.MessageType.tokens2f;
         StringBuilder builder = new StringBuilder("DEACTIVATE-" + _id + " :: ");
         for(NodeInstance curr : children)
-            builder.append("child : " + curr.addr.getValue() + ";");
+            builder.append("child : " + curr.id + ";");
         System.out.println(builder.toString());
         if(father != null && father != SENTINEL_NODE)
             this.networkManager.sendMessage(nextNode, mess);
@@ -153,7 +155,6 @@ public class Node {
                     System.exit(1);
                 }
                 if(father == null){
-                    System.out.println("MOVEON");
                     father = sender;
                     toHandle.remove(sender);
                     children.remove(sender);

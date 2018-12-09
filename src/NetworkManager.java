@@ -36,7 +36,7 @@ public class NetworkManager {
         }
         mess.id = this.id;
         Socket socket = null;
-        System.out.println(" SENDS " + mess.toString() + " TO " + addr.id);
+        System.out.println("SENDS " + mess.toString() + " TO " + addr.id);
         try {
             socket= new Socket(addr.addr.getKey(), addr.addr.getValue());
             ObjectOutputStream os = new ObjectOutputStream(socket.getOutputStream());
