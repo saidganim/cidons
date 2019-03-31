@@ -1,4 +1,3 @@
-import javafx.util.Pair;
 
 public class NodeInstance {
     public Pair<String, Integer> addr;
