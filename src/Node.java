@@ -127,11 +127,11 @@ public class Node {
         StringBuilder builder = new StringBuilder("DEACTIVATE-" + _id + " :: ");
         for(NodeInstance curr : children)
             builder.append("child : " + curr.id + ";");
-        System.out.println(builder.toString());
+        //System.out.println(builder.toString());
         if(father != null && father != SENTINEL_NODE)
             this.networkManager.sendMessage(nextNode, mess);
         else {
-            System.out.println("INITIATOR FINISHED THE TASK : " + Main.counter + " Messages are sent");
+            System.out.println("INITIATOR FINISHED THE TASK : " + Main.counter + " Messages are sent; Time : " +  (System.currentTimeMillis() - Main.start));
             System.exit(0);
         }
     }
@@ -141,17 +141,17 @@ public class Node {
 
         switch(mess.messageType){
             case tokens2f:
-//                System.out.println("NODE-" + this._id + " RECEIVED " + mess.toString());
+//                //System.out.println("NODE-" + this._id + " RECEIVED " + mess.toString());
                 // Child explored all neighbor nodes and definitely attached as tree child
                 moveOn();
                 break;
             case tokenf2s:
-//                System.out.println("NODE-" + this._id + " RECEIVED " + mess.toString());
+//                //System.out.println("NODE-" + this._id + " RECEIVED " + mess.toString());
                 // Trying to explore new node and attach it to dfs-tree
                 if(toHandle.indexOf(sender) != -1) // Remove from toHandle list if it still there
                     toHandle.remove(toHandle.indexOf(sender));
                 if(father == null && sender == null){
-                    System.out.println("Something is wrong. It shouldn't be the case");
+                    //System.out.println("Something is wrong. It shouldn't be the case");
                     System.exit(1);
                 }
                 if(father == null){
@@ -170,7 +170,7 @@ public class Node {
                 // there is no break statement here on purpose...
                 break;
             case visited:
-//                System.out.println("NODE-" + this._id + " RECEIVED " +  mess.toString());
+//                //System.out.println("NODE-" + this._id + " RECEIVED " +  mess.toString());
                 // Current node already attached to some other node in dfs-tree
                     // We have to move on further
                 toHandle.remove(sender);
