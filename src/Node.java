@@ -23,7 +23,7 @@ public class Node {
     private boolean deactivated = false;
 
     public Node(Config config){
-        System.out.println("I am inside 1");
+        System.out.println("I am inside 1 : " + config.initiator);
         this.networkManager = new NetworkManager(config.port);
         this.initiator = config.initiator;
         this.links = config.links;
