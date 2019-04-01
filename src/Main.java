@@ -102,7 +102,7 @@ public class Main {
         return result;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
 
         Config[] configs = config_generator();
         //============================================================= First configuration ========================================================
@@ -230,9 +230,17 @@ public class Main {
             });
         }
         start = System.currentTimeMillis();
+        Thread[] threads = new Thread[configs.length];
+
         for(Runnable curr : fs){
             System.out.println("Something is really started");
-            new Thread(curr).start();
+            threads[fs.indexOf(curr)] = new Thread(curr);
+            threads[fs.indexOf(curr)].start();
         }
+
+        for(Runnable curr : fs){
+            threads[fs.indexOf(curr)].join();
+        }
+
     }
 }
