@@ -220,8 +220,10 @@ public class Main {
 //        }};
 
         ArrayList<Runnable> fs = new ArrayList<Runnable>();
+        System.out.println("Something is not started");
 
         for(int i = 0; i < configs.length; ++i){
+            System.out.println("Something is started");
             final Config conf = configs[i];
              fs.add(() -> {
                 Node node = new Node(conf);
