@@ -231,6 +231,7 @@ public class Main {
         }
         start = System.currentTimeMillis();
         for(Runnable curr : fs){
+            System.out.println("Something is really started");
             new Thread(curr).start();
         }
     }

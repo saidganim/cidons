@@ -32,6 +32,7 @@ public class Node {
         this.networkManager.setNodesList(this.links);
         this.networkManager.id = _id;
         this.networkManager.init(this);
+        System.out.println("I am inside");
         try {
             Runnable f = () -> {
                 try {
