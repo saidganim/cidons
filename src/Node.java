@@ -131,8 +131,10 @@ public class Node {
         for(NodeInstance curr : children)
             builder.append("child : " + curr.id + ";");
         //System.out.println(builder.toString());
-        if(father != null && father != SENTINEL_NODE)
+        if(father != null && father != SENTINEL_NODE) {
             this.networkManager.sendMessage(nextNode, mess);
+            System.out.println("NON-INITIATOR FINISHED THE TASK : " + Main.counter + " Messages are sent; Time : " +  (System.currentTimeMillis() - Main.start));
+        }
         else {
             System.out.println("INITIATOR FINISHED THE TASK : " + Main.counter + " Messages are sent; Time : " +  (System.currentTimeMillis() - Main.start));
             System.exit(0);
