@@ -84,17 +84,20 @@ public class Main {
 
         if(ip.toString().equals("10.141.0.49")){
             result[0].initiator = true;
+            result[0].id = 1;
             result[0].links = new ArrayList<NodeInstance>(){{
                 add(new NodeInstance(new Pair<String, Integer>("10.141.0.50", 1111),2));
                 add(new NodeInstance(new Pair<String, Integer>("10.141.0.51", 1111),3));
             }};
         } else if(ip.toString().equals("10.141.0.50")){
+            result[0].id = 2;
             result[0].links = new ArrayList<NodeInstance>(){{
                 add(new NodeInstance(new Pair<String, Integer>("10.141.0.49", 1111),1));
                 add(new NodeInstance(new Pair<String, Integer>("10.141.0.51", 1111),3));
             }};
         } else {
             result[0].links = new ArrayList<NodeInstance>(){{
+                result[0].id = 3;
                 add(new NodeInstance(new Pair<String, Integer>("10.141.0.49", 1111),1));
                 add(new NodeInstance(new Pair<String, Integer>("10.141.0.50", 1111),2));
             }};
