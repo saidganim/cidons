@@ -132,7 +132,7 @@ public class Main {
         for(String das4_node : das4_network){
             if(ip.toString() == das4_node)
                 continue;
-            result[0].links. add(new NodeInstance(new Pair<String, Integer>(das4_node.substring(das4_node.indexOf('/' + 1)), 1111),das4_network.indexOf(das4_node) + 1));
+            result[0].links. add(new NodeInstance(new Pair<String, Integer>(das4_node.substring(8), 1111),das4_network.indexOf(das4_node) + 1));
         }
 
         return result;
