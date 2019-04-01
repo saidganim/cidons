@@ -45,6 +45,7 @@ public class Node {
             if(config.initiator) {
                 father = SENTINEL_NODE;
                 Thread.sleep(5000);
+                System.out.println("INITIATOR STARTS ACTIVITY :)");
                 moveOn();
             } else {}
         } catch (InterruptedException e) {
