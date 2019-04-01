@@ -130,7 +130,7 @@ public class Main {
         result[0].id = das4_network.indexOf(ip.toString()) + 1;
         result[0].links = new ArrayList<NodeInstance>();
         for(String das4_node : das4_network){
-            if(ip.toString() == das4_node)
+            if(ip.toString().equals(das4_node))
                 continue;
             result[0].links. add(new NodeInstance(new Pair<String, Integer>(das4_node.substring(8), 1111),das4_network.indexOf(das4_node) + 1));
         }
