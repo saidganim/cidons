@@ -226,7 +226,8 @@ public class Main {
             System.out.println("Something is started");
             final Config conf = configs[i];
              fs.add(() -> {
-                Node node = new Node(conf);
+                 System.out.println("Almost inside");
+                 Node node = new Node(conf);
             });
         }
         start = System.currentTimeMillis();
