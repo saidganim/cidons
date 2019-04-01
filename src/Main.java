@@ -29,7 +29,7 @@ public class Main {
 
     public static Integer counter = 0;
     public static Long start;
-    private static int NODENUM = 3;
+    private static int NODENUM = 40;
     private static int PROBABILITY = 100; // percentage
 
 //    private static Config[] config_generator(){
@@ -65,14 +65,57 @@ public class Main {
 
     private static Config[] config_generator(){
         // 10.141.0.49, 10.141.0.50, 10.141.0.51
+
+        ArrayList<String> das4_network = new ArrayList<String>(){{
+            add("node002/10.141.0.2");
+            add("node003/10.141.0.3");
+            add("node004/10.141.0.4");
+            add("node005/10.141.0.5");
+            add("node006/10.141.0.6");
+            add("node007/10.141.0.7");
+            add("node008/10.141.0.8");
+            add("node010/10.141.0.10");
+            add("node012/10.141.0.12");
+            add("node013/10.141.0.13");
+            add("node014/10.141.0.14");
+            add("node015/10.141.0.15");
+            add("node016/10.141.0.16");
+            add("node017/10.141.0.17");
+            add("node018/10.141.0.18");
+            add("node019/10.141.0.19");
+            add("node020/10.141.0.20");
+            add("node021/10.141.0.21");
+            add("node022/10.141.0.22");
+            add("node023/10.141.0.23");
+            add("node026/10.141.0.26");
+            add("node027/10.141.0.27");
+            add("node030/10.141.0.30");
+            add("node031/10.141.0.31");
+            add("node040/10.141.0.40");
+            add("node041/10.141.0.41");
+            add("node042/10.141.0.42");
+            add("node043/10.141.0.43");
+            add("node044/10.141.0.44");
+            add("node046/10.141.0.46");
+            add("node047/10.141.0.47");
+            add("node048/10.141.0.48");
+            add("node049/10.141.0.49");
+            add("node050/10.141.0.50");
+            add("node051/10.141.0.51");
+            add("node059/10.141.0.59");
+            add("node060/10.141.0.60");
+            add("node061/10.141.0.61");
+            add("node062/10.141.0.62");
+            add("node065/10.141.0.65");
+        }};
         InetAddress ip = null;
         String hostname;
 
         try {
             ip = InetAddress.getLocalHost();
             hostname = ip.getHostName();
-            System.out.println("Your current IP address : " + ip);
-            System.out.println("Your current Hostname : " + hostname);
+//            System.out.println("Your current IP address : " + ip);
+//            System.out.println("Your current Hostname : " + hostname);
 
         } catch (UnknownHostException e) {
 
@@ -82,26 +125,16 @@ public class Main {
         Config[] result = new Config[1];
         result[0] = new Config();
 
-        if(ip.toString().equals("node049/10.141.0.49")){
-            result[0].initiator = true;
-            result[0].id = 1;
-            result[0].links = new ArrayList<NodeInstance>(){{
-                add(new NodeInstance(new Pair<String, Integer>("10.141.0.50", 1111),2));
-                add(new NodeInstance(new Pair<String, Integer>("10.141.0.51", 1111),3));
-            }};
-        } else if(ip.toString().equals("node050/10.141.0.50")){
-            result[0].id = 2;
-            result[0].links = new ArrayList<NodeInstance>(){{
-                add(new NodeInstance(new Pair<String, Integer>("10.141.0.49", 1111),1));
-                add(new NodeInstance(new Pair<String, Integer>("10.141.0.51", 1111),3));
-            }};
-        } else {
-            result[0].links = new ArrayList<NodeInstance>(){{
-                result[0].id = 3;
-                add(new NodeInstance(new Pair<String, Integer>("10.141.0.49", 1111),1));
-                add(new NodeInstance(new Pair<String, Integer>("10.141.0.50", 1111),2));
-            }};
+
+        result[0].initiator = das4_network.indexOf(ip.toString()) == 0? true : false;
+        result[0].id = das4_network.indexOf(ip.toString()) + 1;
+        result[0].links = new ArrayList<NodeInstance>();
+        for(String das4_node : das4_network){
+            if(ip.toString() == das4_node)
+                continue;
+            result[0].links. add(new NodeInstance(new Pair<String, Integer>(das4_node, 1111),das4_network.indexOf(das4_node) + 1));
         }
+
         return result;
     }
 
