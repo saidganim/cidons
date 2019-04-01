@@ -23,6 +23,7 @@ public class Node {
     private boolean deactivated = false;
 
     public Node(Config config){
+        System.out.println("I am inside 1");
         this.networkManager = new NetworkManager(config.port);
         this.initiator = config.initiator;
         this.links = config.links;
@@ -32,7 +33,7 @@ public class Node {
         this.networkManager.setNodesList(this.links);
         this.networkManager.id = _id;
         this.networkManager.init(this);
-        System.out.println("I am inside");
+        System.out.println("I am inside 2");
         try {
             Runnable f = () -> {
                 try {
