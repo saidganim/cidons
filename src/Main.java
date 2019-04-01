@@ -63,6 +63,12 @@ public class Main {
 //    }
 
 
+
+    static int log(int x, int base) {
+        return (int) (Math.log(x) / Math.log(base));
+    }
+
+
     private static Config[] config_generator(){
         // 10.141.0.49, 10.141.0.50, 10.141.0.51
 
@@ -114,7 +120,7 @@ public class Main {
         try {
             ip = InetAddress.getLocalHost();
             hostname = ip.getHostName();
-//            System.out.println("Your current IP address : " + ip);
+            System.out.println("Your current IP address : " + ip);
 //            System.out.println("Your current Hostname : " + hostname);
 
         } catch (UnknownHostException e) {
@@ -129,11 +135,27 @@ public class Main {
         result[0].initiator = das4_network.indexOf(ip.toString()) == 0? true : false;
         result[0].id = das4_network.indexOf(ip.toString()) + 1;
         result[0].links = new ArrayList<NodeInstance>();
-        for(String das4_node : das4_network){
-            if(ip.toString().equals(das4_node))
-                continue;
-            result[0].links. add(new NodeInstance(new Pair<String, Integer>(das4_node.substring(8), 1111),das4_network.indexOf(das4_node) + 1));
-        }
+        int index = das4_network.indexOf(ip.toString()) + 1;
+
+        int level = log(index, 2);
+        int parentid = (int) (Math.pow(2, level - 1) + Math.floor((index - Math.pow(2, level)) / 2)) - 1;
+        int childid = (int) (Math.pow(2, level + 1) + 2 * (index - Math.pow(2, level))) - 1;
+
+        // link to a parent
+        if(!result[0].initiator)
+            result[0].links. add(new NodeInstance(new Pair<String, Integer>(das4_network.get(parentid).substring(8), 1111),das4_network.indexOf(das4_network.get(parentid)) + 1));
+
+        // links to children
+        if(childid < das4_network.size())
+            result[0].links. add(new NodeInstance(new Pair<String, Integer>(das4_network.get(childid).substring(8), 1111),das4_network.indexOf(das4_network.get(childid)) + 1));
+        if(childid + 1 < das4_network.size())
+            result[0].links. add(new NodeInstance(new Pair<String, Integer>(das4_network.get(childid + 1).substring(8), 1111),das4_network.indexOf(das4_network.get(childid + 1)) + 1));
+
+//        for(String das4_node : das4_network){
+//            if(ip.toString().substring(8).equals(das4_node.substring(8)))
+//                continue;
+//            result[0].links. add(new NodeInstance(new Pair<String, Integer>(das4_node.substring(8), 1111),das4_network.indexOf(das4_node) + 1));
+//        }
 
         return result;
     }
@@ -259,8 +281,9 @@ public class Main {
 
         for(int i = 0; i < configs.length; ++i){
             final Config conf = configs[i];
-             fs.add(() -> {
-                 Node node = new Node(conf);
+            System.out.println("STARTED NODE " + conf + " children : " + conf.links);
+            fs.add(() -> {
+                Node node = new Node(conf);
             });
         }
         start = System.currentTimeMillis();
